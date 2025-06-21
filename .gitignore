@@ -1,0 +1,7 @@
+addons/*
+!addons/.gitkeep
+!addons/requirements.txt
+.env
+odoo.conf
+.idea/
+.vscode/

@@ -1,0 +1,56 @@
+services:
+
+  odoo:
+    platform: linux/amd64
+    container_name: ${PROJECT_NAME}-ODOO
+    build:
+      context: .
+      dockerfile: build/${ODOO_VERSION}_Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    volumes:
+      - odoo-data:/var/lib/odoo
+      - ./odoo.conf:/etc/odoo/odoo.conf
+      - ./addons:/mnt
+
+  db:
+    container_name: ${PROJECT_NAME}-DB
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - "${DB_PORT}:5432"
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/pgdata
+
+  pgadmin:
+    container_name: ${PROJECT_NAME}-PGADMIN
+    image: dpage/pgadmin4:7.3
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8099:80"
+    tty: true
+    restart: unless-stopped
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    links:
+      - "db:psql-odoo-server"
+
+volumes:
+  odoo-data:
+  postgres-data:
+  pgadmin-data:

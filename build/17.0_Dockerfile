@@ -1,0 +1,13 @@
+FROM odoo:17.0
+
+USER root
+
+COPY ./addons/requirements.txt /tmp/requirements.txt
+
+RUN pip3 install --upgrade pip \
+    && pip3 install debugpy \
+    && pip3 install -r /tmp/requirements.txt
+
+COPY ./addons /mnt
+
+USER odoo

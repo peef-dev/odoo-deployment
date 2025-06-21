@@ -1,0 +1,24 @@
+ARG ODOO_VERSION=18.0
+
+FROM odoo:18.0
+
+USER root
+
+RUN apt-get update && \
+    apt install -y python3-pip python3-debugpy
+
+COPY ./addons /mnt
+
+ENV ODOO_RUNNING_ENV=dev
+
+USER odoo
+
+# In case of error FileExistsError: [Errno 17] File exists: '/var/lib/odoo/.local/share/Odoo/sessions'
+# run these 3 commands
+# docker exec -u root TEST-ODOO mkdir -p /var/lib/odoo/.local/share/Odoo/sessions
+# docker exec -u root TEST-ODOO chown -R odoo:odoo /var/lib/odoo/.local
+# docker exec -u root TEST-ODOO chmod -R 700 /var/lib/odoo/.local
+# or add the command below to this Dockerfile
+# RUN mkdir -p /var/lib/odoo/.local/share/Odoo/sessions && \
+#     chown -R odoo:odoo /var/lib/odoo/.local && \
+#     chmod -R 700 /var/lib/odoo/.local
