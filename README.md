@@ -48,3 +48,16 @@ You can run Odoo with the following command:
 ```
 ./dev.sh -d <database_name> -i <module_name>
 ```
+
+## Docker commands
+
+Remove containers and linked volumes
+
+```
+docker compose up down --remove-orphans -v
+```
+
+Show all containers
+```
+docker ps -a --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+```
