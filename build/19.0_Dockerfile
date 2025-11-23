@@ -1,0 +1,25 @@
+ARG ODOO_VERSION=19.0
+
+FROM odoo:19.0
+
+USER root
+
+RUN apt-get update && \
+    apt install -y python3-pip python3-debugpy
+
+COPY ./addons/requirements.txt /tmp/requirements.txt
+
+RUN pip3 install -r /tmp/requirements.txt --break-system-packages
+
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+COPY ./addons /mnt
+
+ENV ODOO_RUNNING_ENV=dev
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+USER odoo
+
+CMD ["odoo"]
